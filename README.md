@@ -101,3 +101,26 @@ Loading data: ./data/arxiv_subset.parquet
       0704.0611  Modeling the field of laser welding melt pool by   Efficient control of a laser welding process requ  BracicA. Borstnik, GovekarE., GrabecI.  2007  physics.comp-ph  0.817434
       0704.2241  Why should anyone care about computing with anyon  In this article we present a pedagogical introduc       BrennenGavin K., PachosJiannis K.  2007         quant-ph  0.814218
 ```
+
+У файлі README надайте відповіді на обов’язкові теоретичні запитання:
+
+Чи збігаються топ-5 для cosine і dot product і чому?
+Чи відрізняються результати для L2 і чому?
+Що сталося б, якби ембеддинги не були нормалізовані?
+
+`TODO`
+
+## Частина 4 — Chunking
+
+```
+PS C:\Homework\horbokon_nosql_2> uv run .\scripts\05_chunking.py
+Loading model: allenai/specter2_base
+Loading weights: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 73982.14it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (521 > 512). Running this sequence through the model will result in indexing errors
+Upserting chunk vectors to 'arxiv-papers-fixed-chunks': 138 total
+Upserting: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.24batch/s]
+Upsert completed: 138 vectors, 768 dimensions, cosine metric
+Upserting chunk vectors to 'arxiv-papers-semantic-chunks': 132 total
+Upserting: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21batch/s]
+Upsert completed: 132 vectors, 768 dimensions, cosine metric
+```
