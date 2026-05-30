@@ -12,6 +12,7 @@ OUTPUT_PATH = "./embeddings/embeddings.npy"
 MODEL_NAME = "allenai/specter2_base"
 COLUMN_TITLE = "title"
 COLUMN_ABSTRACT = "abstract"
+BATCH_SIZE = 64
 
 os.makedirs("embeddings", exist_ok=True)
 
@@ -27,14 +28,13 @@ model = SentenceTransformer(MODEL_NAME, model_kwargs=model_args).to(device)
 print(f"Loading data: {INPUT_PATH}")
 arxiv = pd.read_parquet(INPUT_PATH)
 sentences = arxiv[COLUMN_TITLE].str.cat(arxiv[COLUMN_ABSTRACT], sep=model.tokenizer.sep_token).tolist()
-sentences.sort(key=len)
 
 # embeddings
 print(f"Starting embedding: {len(sentences)} sentences")
 start = time.time()
 embeddings = model.encode(
     sentences,
-    batch_size=64,
+    batch_size=BATCH_SIZE,
     normalize_embeddings=True,
     show_progress_bar=True
 )

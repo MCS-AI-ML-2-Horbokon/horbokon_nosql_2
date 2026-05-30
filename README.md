@@ -47,7 +47,6 @@ Name: count, dtype: int64
 
 `TODO`
 
-
 ### 1.3. Отримання ембеддингів
 
 ```
@@ -62,4 +61,17 @@ Total sentences embedded: 10000
 Embedding dimensions: 768
 L2-norm of 1st vector: 1.0
 Saved to: ./embeddings/embeddings.npy
+```
+
+Поясніть, чому при використанні нормалізованих ембеддингів (одиничної довжини) косинусна схожість (cosine similarity) еквівалентна скалярному добутку (dot product)?
+
+`TODO`
+
+## Частина 2 — Завантаження даних і метадані
+
+```
+PS C:\Homework\horbokon_nosql_2> uv run .\scripts\03_load_to_pinecone.py
+Upserting vectors to Pinecone: 10000 total
+Upserting: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 79/79 [00:22<00:00,  3.55batch/s]
+Upsert completed: 10000 vectors, 768 dimensions, cosine metric
 ```
