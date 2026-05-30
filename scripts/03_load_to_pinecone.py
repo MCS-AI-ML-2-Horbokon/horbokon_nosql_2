@@ -1,9 +1,9 @@
 import os
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from dotenv import load_dotenv
 from pinecone import Pinecone, ServerlessSpec, Vector
+
 
 load_dotenv()
 
@@ -16,6 +16,9 @@ MAX_CONCURRENCY = 8
 COLUMN_ID = "id"
 COLUMN_TITLE = "title"
 COLUMN_ABSTRACT = "abstract"
+COLUMN_AUTHORS = "authors"
+COLUMN_CATEGORY = "category"
+COLUMN_YEAR = "year"
 
 # Ініціалізація клієнта
 pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
@@ -39,8 +42,11 @@ vectors = [
         id=d[COLUMN_ID],
         values=embeddings[i, :].tolist(),
         metadata={
-            "title": d[COLUMN_TITLE][:200],
-            "abstract": d[COLUMN_ABSTRACT][:500]
+            COLUMN_TITLE: d[COLUMN_TITLE],
+            COLUMN_ABSTRACT: d[COLUMN_ABSTRACT][:500],
+            COLUMN_AUTHORS: d[COLUMN_AUTHORS][:200],
+            COLUMN_CATEGORY: d[COLUMN_CATEGORY],
+            COLUMN_YEAR: d[COLUMN_YEAR]
         }
     )
     for i, d in documents.iterrows()
