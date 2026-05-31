@@ -39,9 +39,10 @@ documents = pd.read_parquet(INPUT_PARQUET)
 embeddings = np.load(INPUT_EMBEDDINGS)
 vectors = [
     Vector(
-        id=d[COLUMN_ID],
+        id=str(i),
         values=embeddings[i, :].tolist(),
         metadata={
+            COLUMN_ID: d[COLUMN_ID],
             COLUMN_TITLE: d[COLUMN_TITLE],
             COLUMN_ABSTRACT: d[COLUMN_ABSTRACT][:500],
             COLUMN_AUTHORS: d[COLUMN_AUTHORS][:200],

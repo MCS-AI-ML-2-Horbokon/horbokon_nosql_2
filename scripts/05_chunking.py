@@ -28,13 +28,10 @@ COLUMN_YEAR = "year"
 TOKENS_IN_CHUNK = 120
 TOKENS_IN_CHUNK_OVERLAP = 20
 SENTENCE_SIMILARITY = 0.7 # Merge into one chunk if above
-METADATA_ARXIV_ID = "arxiv_id"
 METADATA_CHUNK = "chunk"
 METADATA_CHUNK_NUMBER = "chunk_number"
 
 print(f"Loading model: {MODEL_NAME}")
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model_args = { "torch_dtype": "bfloat16" }
 model = SentenceTransformer(MODEL_NAME)
 
 def count_tokens(text: str) -> int:
@@ -117,20 +114,20 @@ for index_name in [INDEX_NAME_FIXED, INDEX_NAME_SEMANTIC]:
 def upsert_chunked_index(index_name: str, chunk_function) -> None:
     vectors = []
 
-    for _, document in arxiv_longest.iterrows():
+    for id, document in arxiv_longest.iterrows():
         chunks = chunk_function(document[COLUMN_ABSTRACT])
         embeddings = model.encode(chunks, normalize_embeddings=True)
 
         for chunk_number, chunk in enumerate(chunks):
             vector = Vector(
-                id=f"{document[COLUMN_ID]}-{chunk_number}",
+                id=f"{id}-{chunk_number}",
                 values=embeddings[chunk_number, :].tolist(),
                 metadata={
+                    COLUMN_ID: document[COLUMN_ID],
                     COLUMN_TITLE: document[COLUMN_TITLE],
                     COLUMN_AUTHORS: document[COLUMN_AUTHORS],
                     COLUMN_CATEGORY: document[COLUMN_CATEGORY],
                     COLUMN_YEAR: document[COLUMN_YEAR],
-                    METADATA_ARXIV_ID: document[COLUMN_ID],
                     METADATA_CHUNK: chunk,
                     METADATA_CHUNK_NUMBER: chunk_number
                 }
@@ -139,7 +136,6 @@ def upsert_chunked_index(index_name: str, chunk_function) -> None:
 
     print(f"Upserting chunk vectors to '{index_name}': {len(vectors)} total")
     index = pc.index(index_name)
-    index.delete(delete_all=True)
     index.upsert(
         vectors=vectors,
         batch_size=BATCH_SIZE,

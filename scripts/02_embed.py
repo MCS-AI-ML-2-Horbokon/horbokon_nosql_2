@@ -19,8 +19,7 @@ os.makedirs("embeddings", exist_ok=True)
 # load model
 print(f"Loading model: {MODEL_NAME}")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model_args = { "torch_dtype": "bfloat16" }
-model = SentenceTransformer(MODEL_NAME, model_kwargs=model_args).to(device)
+model = SentenceTransformer(MODEL_NAME).to(device)
 
 # load data
 print(f"Loading data: {INPUT_PATH}")

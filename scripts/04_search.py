@@ -20,12 +20,12 @@ COLUMN_ABSTRACT = "abstract"
 COLUMN_AUTHORS = "authors"
 COLUMN_CATEGORY = "category"
 COLUMN_YEAR = "year"
+COLUMN_SCORE = "score"
 
 # load model
 print(f"Loading model: {MODEL_NAME}")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model_args = { "torch_dtype": "bfloat16" }
-model = SentenceTransformer(MODEL_NAME, model_kwargs=model_args).to(device)
+model = SentenceTransformer(MODEL_NAME).to(device)
 
 # load data
 print(f"Loading data: {INPUT_PARQUET}")
@@ -38,36 +38,39 @@ index = pc.index(INDEX_NAME)
 # load local embeddings
 embeddings = np.load(INPUT_EMBEDDINGS)
 
-def search_local(query: str, top_k: int = TOP_K):
+def search_local(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     embedding = model.encode(query)
     similarity = model.similarity(embedding, embeddings)
     indexes = torch.argsort(similarity, dim=-1, descending=True)[0, :top_k]
     results = arxiv.iloc[indexes].copy()
-    results["score"] = similarity[0, indexes]
-    print(results)
+    results[COLUMN_SCORE] = similarity[0, indexes]
+    return results
 
-def search_index(query: str, top_k: int = TOP_K):
+def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     embedding = model.encode(query)
     results = index.query(
         vector=embedding.tolist(),
         top_k=top_k,
         include_metadata=True
     )
+    rows = {}
     for match in results.matches:
         meta = match.metadata
         assert meta
-        print(
-            f"{match.id:>15}  "
-            f"{meta[COLUMN_TITLE][:49]:>49}  "
-            f"{meta[COLUMN_ABSTRACT][:49]:>49}  "
-            f"{meta[COLUMN_AUTHORS][:38]:>38}  "
-            f"{meta[COLUMN_YEAR]}  "
-            f"{meta[COLUMN_CATEGORY]:>15}  "
-            f"{match.score:.6f}"
-        )
+        rows[match.id] = {
+            COLUMN_ID: meta[COLUMN_ID],
+            COLUMN_TITLE: meta[COLUMN_TITLE],
+            COLUMN_ABSTRACT: meta[COLUMN_ABSTRACT],
+            COLUMN_AUTHORS: meta[COLUMN_AUTHORS],
+            COLUMN_YEAR: meta[COLUMN_YEAR],
+            COLUMN_CATEGORY: meta[COLUMN_CATEGORY],
+            COLUMN_SCORE: match.score
+        }
+
+    return pd.DataFrame.from_dict(rows, orient="index")
 
 print("\n=== Search in local memory ===\n")
-search_local("teaching machines to recognize objects in pictures")
+print(search_local("teaching machines to recognize objects in pictures"))
 
 print("\n=== Search in Pinecone index ===\n")
-search_index("teaching machines to recognize objects in pictures")
+print(search_index("teaching machines to recognize objects in pictures"))

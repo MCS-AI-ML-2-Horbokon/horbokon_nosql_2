@@ -81,25 +81,30 @@ Upsert completed: 10000 vectors, 768 dimensions, cosine metric
 ```
 PS C:\Homework\horbokon_nosql_2> uv run .\scripts\04_search.py
 Loading model: allenai/specter2_base
-Loading weights: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 5506.22it/s]
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 62186.45it/s]
 Loading data: ./data/arxiv_subset.parquet
 
 === Search in local memory ===
 
-             id                                              title                                           abstract                                 authors  year         category     score
-378   0704.0379                        Capturing knots in polymers   This paper visualizes a knot reduction algorithm            VirnauP., KardarM., KantorY.  2007    cond-mat.soft  0.828615
-3350  0704.3351  Symbolic sensors : one solution to the numeric...  This paper introduces the concept of symbolic ...              BenoitEric, FoulloyLaurent  2007  physics.ins-det  0.825920
-4115  0705.0113                                    The Mathematics  This is an essay that considering the knowledg...                       HJavier Guachalla  2007          math.HO  0.824928
-610   0704.0611  Modeling the field of laser welding melt pool ...  Efficient control of a laser welding process r...  BracicA. Borstnik, GovekarE., GrabecI.  2007  physics.comp-ph  0.817517
-3181  0704.3182  Python for Education: Computational Methods fo...  We describe a novel, interdisciplinary, comput...    MyersChristopher R., SethnaJames. P.  2007          nlin.CD  0.813897
+             id                                              title                                           abstract  ...  year         category     score
+378   0704.0379                        Capturing knots in polymers   This paper visualizes a knot reduction algorithm  ...  2007    cond-mat.soft  0.829367
+3350  0704.3351  Symbolic sensors : one solution to the numeric...  This paper introduces the concept of symbolic ...  ...  2007  physics.ins-det  0.826005
+4115  0705.0113                                    The Mathematics  This is an essay that considering the knowledg...  ...  2007          math.HO  0.825377
+610   0704.0611  Modeling the field of laser welding melt pool ...  Efficient control of a laser welding process r...  ...  2007  physics.comp-ph  0.818052
+3181  0704.3182  Python for Education: Computational Methods fo...  We describe a novel, interdisciplinary, comput...  ...  2007          nlin.CD  0.814229
+
+[5 rows x 7 columns]
 
 === Search in Pinecone index ===
 
-      0704.0379                        Capturing knots in polymers   This paper visualizes a knot reduction algorithm            VirnauP., KardarM., KantorY.  2007    cond-mat.soft  0.827655
-      0704.3351  Symbolic sensors : one solution to the numerical-  This paper introduces the concept of symbolic sen              BenoitEric, FoulloyLaurent  2007  physics.ins-det  0.826808
-      0705.0113                                    The Mathematics  This is an essay that considering the knowledge s                       HJavier Guachalla  2007          math.HO  0.825229
-      0704.0611  Modeling the field of laser welding melt pool by   Efficient control of a laser welding process requ  BracicA. Borstnik, GovekarE., GrabecI.  2007  physics.comp-ph  0.817434
-      0704.2241  Why should anyone care about computing with anyon  In this article we present a pedagogical introduc       BrennenGavin K., PachosJiannis K.  2007         quant-ph  0.814218
+             id                                              title                                           abstract  ...  year         category     score
+378   0704.0379                        Capturing knots in polymers   This paper visualizes a knot reduction algorithm  ...  2007    cond-mat.soft  0.828767
+3350  0704.3351  Symbolic sensors : one solution to the numeric...  This paper introduces the concept of symbolic ...  ...  2007  physics.ins-det  0.826274
+4115  0705.0113                                    The Mathematics  This is an essay that considering the knowledg...  ...  2007          math.HO  0.825566
+610   0704.0611  Modeling the field of laser welding melt pool ...  Efficient control of a laser welding process r...  ...  2007  physics.comp-ph  0.817017
+2240  0704.2241  Why should anyone care about computing with an...  In this article we present a pedagogical intro...  ...  2007         quant-ph  0.814620
+
+[5 rows x 7 columns]
 ```
 
 У файлі README надайте відповіді на обов’язкові теоретичні запитання:
