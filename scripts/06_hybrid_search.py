@@ -26,7 +26,7 @@ COLUMN_SCORE = "score"
 TEST_QUERY_1 = "BERT fine-tuning"
 TEST_QUERY_2 = "Yann LeCun convolutional networks"
 TEST_QUERY_3 = "making computers understand human emotions from text"
-TEST_QUERY = "Image Attributes for Human Identification Protocols"
+TEST_QUERIES = [TEST_QUERY_1, TEST_QUERY_2, TEST_QUERY_3]
 
 def get_words(text: str):
     return re.findall(r"\b(\w+)\b", text.lower())
@@ -114,13 +114,18 @@ def search_hybrid_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     fused_results = RRF([bm25_results, semantic_results])
     return fused_results.iloc[:top_k]
 
-print("\n=== Search with local BM25 index ===\n")
-print(search_bm25(TEST_QUERY))
-print("\n=== Search with local vector search ===\n")
-print(search_semantic_local(TEST_QUERY))
-print("\n=== Search with local hybrid search (RRF of BM25 and vector search) ===\n")
-print(search_hybrid_local(TEST_QUERY))
-print("\n=== Search with vector search in Pinecone ===\n")
-print(search_semantic_index(TEST_QUERY))
-print("\n=== Search with hybrid search with index in Pinecone and local BM25 ===\n")
-print(search_hybrid_index(TEST_QUERY))
+def print_search_results(query: str) -> None:
+    print(f"\n=== Query: {query} ===")
+
+    print("\n--- Top BM25 results ---\n")
+    print(search_bm25(query))
+
+    print("\n--- Top vector search results in Pinecone ---\n")
+    print(search_semantic_index(query))
+
+    print("\n--- Top hybrid search results with RRF ---\n")
+    print(search_hybrid_index(query))
+
+
+for query in TEST_QUERIES:
+    print_search_results(query)
