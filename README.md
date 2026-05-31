@@ -200,21 +200,21 @@ Loading weights: 100%|███████████████████�
 4822  0705.0820  ANDNA: the distributed hostname management sys...  We present the Abnormal Netsukuku Domain Name ...  ...  2007           cs.NI  0.800605
 5801  0705.1799  Subjective Questions and Answers for a Mathema...  This article of mathematical education reflect...  ...  2007         math.GM  0.799484
 
-[10 rows x 7 columns]
+[10 rows x 7 columns].
 
 === Search with hybrid search with index in Pinecone and local BM25 ===
 
              id                                              title                                           abstract  ...  year        category     score
-2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.016393
-2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.016393
-4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.016129
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.032787
 5364  0705.1362  Studies of EGRET sources with a novel image re...  We have developed an image restoration techniq...  ...  2007        astro-ph  0.016129
-9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.015873
+4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.016129
 8187  0705.4185  Secure Two-party Protocols for Point Inclusion...  It is well known that, in theory, the general ...  ...  2007           cs.CR  0.015873
-6582  0705.2580  Quantum protocols for transference of proof of...  Zero-knowledge proof system is an important pr...  ...  2007        quant-ph  0.015625
+9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.015873
 70    0704.0071  Pairwise comparisons of typological profiles (...  No abstract given; compares pairs of languages...  ...  2007  physics.soc-ph  0.015625
+6582  0705.2580  Quantum protocols for transference of proof of...  Zero-knowledge proof system is an important pr...  ...  2007        quant-ph  0.015625
 9837  0706.1151  A taxonomic Approach to Topology Control in Ad...  Topology Control (TC) aims at tuning the topol...  ...  2007           cs.NI  0.015385
 7742  0705.3740                        Optimal Iris Fuzzy Sketches  Fuzzy sketches, introduced as a link between b...  ...  2007           cs.CR  0.015385
+5587  0705.1585  HMM Speaker Identification Using Linear and No...  Speaker identification is a powerful, non-inva...  ...  2007           cs.LG  0.015152
 
 [10 rows x 7 columns]
 ```

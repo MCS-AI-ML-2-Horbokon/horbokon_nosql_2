@@ -76,7 +76,8 @@ def search_semantic_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     for match in results.matches:
         meta = match.metadata
         assert meta
-        rows[match.id] = {
+        id = int(match.id)
+        rows[id] = {
             COLUMN_ID: meta[COLUMN_ID],
             COLUMN_TITLE: meta[COLUMN_TITLE],
             COLUMN_ABSTRACT: meta[COLUMN_ABSTRACT],
