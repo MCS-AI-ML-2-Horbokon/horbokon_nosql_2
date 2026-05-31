@@ -46,6 +46,33 @@ def search_local(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     results[COLUMN_SCORE] = similarity[0, indexes]
     return results
 
+
+def search_local_cosine(query: str, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query, normalize_embeddings=True)
+    scores = embeddings @ embedding
+    indexes = np.argsort(scores)[::-1][:top_k]
+    results = arxiv.iloc[indexes].copy()
+    results[COLUMN_SCORE] = scores[indexes]
+    return results
+
+
+def search_local_dot_product(query: str, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query, normalize_embeddings=True)
+    scores = embeddings @ embedding
+    indexes = np.argsort(scores)[::-1][:top_k]
+    results = arxiv.iloc[indexes].copy()
+    results[COLUMN_SCORE] = scores[indexes]
+    return results
+
+
+def search_local_l2(query: str, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query, normalize_embeddings=True)
+    distances = np.linalg.norm(embeddings - embedding, axis=1)
+    indexes = np.argsort(distances)[:top_k]
+    results = arxiv.iloc[indexes].copy()
+    results[COLUMN_SCORE] = distances[indexes]
+    return results
+
 def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     embedding = model.encode(query)
     results = index.query(
@@ -69,8 +96,19 @@ def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
 
     return pd.DataFrame.from_dict(rows, orient="index")
 
+query = "teaching machines to recognize objects in pictures"
+
 print("\n=== Search in local memory ===\n")
-print(search_local("teaching machines to recognize objects in pictures"))
+print(search_local(query))
 
 print("\n=== Search in Pinecone index ===\n")
-print(search_index("teaching machines to recognize objects in pictures"))
+print(search_index(query))
+
+print("\n=== Local cosine similarity top-5 ===\n")
+print(search_local_cosine(query))
+
+print("\n=== Local dot product top-5 ===\n")
+print(search_local_dot_product(query))
+
+print("\n=== Local L2 distance top-5 ===\n")
+print(search_local_l2(query))
