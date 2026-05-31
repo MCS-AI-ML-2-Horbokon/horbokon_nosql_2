@@ -129,3 +129,92 @@ Upserting chunk vectors to 'arxiv-papers-semantic-chunks': 132 total
 Upserting: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.21batch/s]
 Upsert completed: 132 vectors, 768 dimensions, cosine metric
 ```
+
+## Частина 5 — Гібридний пошук
+
+```
+PS C:\Homework\horbokon_nosql_2> uv run .\scripts\06_hybrid_search.py
+Loading data: ./data/arxiv_subset.parquet
+Loading model: allenai/specter2_base
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 199/199 [00:00<00:00, 51890.99it/s]
+
+=== Search with local BM25 index ===
+
+             id                                              title                                           abstract  ...  year  category      score
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007     cs.CR  46.760870
+5364  0705.1362  Studies of EGRET sources with a novel image re...  We have developed an image restoration techniq...  ...  2007  astro-ph  17.312981
+8187  0705.4185  Secure Two-party Protocols for Point Inclusion...  It is well known that, in theory, the general ...  ...  2007     cs.CR  14.570931
+6582  0705.2580  Quantum protocols for transference of proof of...  Zero-knowledge proof system is an important pr...  ...  2007  quant-ph  14.002364
+9837  0706.1151  A taxonomic Approach to Topology Control in Ad...  Topology Control (TC) aims at tuning the topol...  ...  2007     cs.NI  13.855781
+6906  0705.2904  Key rate of quantum key distribution with hash...  We propose an information reconciliation proto...  ...  2007  quant-ph  13.728585
+4206  0705.0204  Using Images to create a Hierarchical Grid Spa...  This paper presents a hybrid approach to spati...  ...  2007     cs.DS  13.639945
+5526  0705.1524         Studies of Cosmic Rays with GeV Gamma Rays  We describe the role of GeV gamma-ray observat...  ...  2007  astro-ph  13.542249
+1736  0704.1737     Quantum memory for images - a quantum hologram  Matter-light quantum interface and quantum mem...  ...  2007  quant-ph  13.385296
+3398  0704.3399  Cooperative Transmission Protocols with High S...  Cooperative transmission is an emerging commun...  ...  2007     cs.IT  13.348538
+
+[10 rows x 7 columns]
+
+=== Search with local vector search ===
+
+             id                                              title                                           abstract  ...  year        category     score
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.837673
+9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.818546
+4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.817667
+70    0704.0071  Pairwise comparisons of typological profiles (...  No abstract given; compares pairs of languages...  ...  2007  physics.soc-ph  0.816096
+7742  0705.3740                        Optimal Iris Fuzzy Sketches  Fuzzy sketches, introduced as a link between b...  ...  2007           cs.CR  0.815805
+5587  0705.1585  HMM Speaker Identification Using Linear and No...  Speaker identification is a powerful, non-inva...  ...  2007           cs.LG  0.807193
+6940  0705.2938  Codage arithmetique pour la description d'une ...  Using predictive adaptive arithmetic coding an...  ...  2007         stat.ME  0.804245
+6303  0705.2301                                     Withrawn paper  This paper has been withdrawn by the authors d...  ...  2007           gr-qc  0.802214
+4822  0705.0820  ANDNA: the distributed hostname management sys...  We present the Abnormal Netsukuku Domain Name ...  ...  2007           cs.NI  0.801659
+5801  0705.1799  Subjective Questions and Answers for a Mathema...  This article of mathematical education reflect...  ...  2007         math.GM  0.798628
+
+[10 rows x 7 columns]
+
+=== Search with local hybrid search (RRF of BM25 and vector search) ===
+
+             id                                              title                                           abstract  ...  year        category     score
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.032787
+5364  0705.1362  Studies of EGRET sources with a novel image re...  We have developed an image restoration techniq...  ...  2007        astro-ph  0.016129
+9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.016129
+8187  0705.4185  Secure Two-party Protocols for Point Inclusion...  It is well known that, in theory, the general ...  ...  2007           cs.CR  0.015873
+4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.015873
+70    0704.0071  Pairwise comparisons of typological profiles (...  No abstract given; compares pairs of languages...  ...  2007  physics.soc-ph  0.015625
+6582  0705.2580  Quantum protocols for transference of proof of...  Zero-knowledge proof system is an important pr...  ...  2007        quant-ph  0.015625
+9837  0706.1151  A taxonomic Approach to Topology Control in Ad...  Topology Control (TC) aims at tuning the topol...  ...  2007           cs.NI  0.015385
+7742  0705.3740                        Optimal Iris Fuzzy Sketches  Fuzzy sketches, introduced as a link between b...  ...  2007           cs.CR  0.015385
+5587  0705.1585  HMM Speaker Identification Using Linear and No...  Speaker identification is a powerful, non-inva...  ...  2007           cs.LG  0.015152
+
+[10 rows x 7 columns]
+
+=== Search with vector search in Pinecone ===
+
+             id                                              title                                           abstract  ...  year        category     score
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.837298
+4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.818065
+9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.817518
+70    0704.0071  Pairwise comparisons of typological profiles (...  No abstract given; compares pairs of languages...  ...  2007  physics.soc-ph  0.816376
+7742  0705.3740                        Optimal Iris Fuzzy Sketches  Fuzzy sketches, introduced as a link between b...  ...  2007           cs.CR  0.815991
+5587  0705.1585  HMM Speaker Identification Using Linear and No...  Speaker identification is a powerful, non-inva...  ...  2007           cs.LG  0.807165
+6940  0705.2938  Codage arithmetique pour la description d'une ...  Using predictive adaptive arithmetic coding an...  ...  2007         stat.ME  0.804714
+6303  0705.2301                                     Withrawn paper  This paper has been withdrawn by the authors d...  ...  2007           gr-qc  0.802262
+4822  0705.0820  ANDNA: the distributed hostname management sys...  We present the Abnormal Netsukuku Domain Name ...  ...  2007           cs.NI  0.800605
+5801  0705.1799  Subjective Questions and Answers for a Mathema...  This article of mathematical education reflect...  ...  2007         math.GM  0.799484
+
+[10 rows x 7 columns]
+
+=== Search with hybrid search with index in Pinecone and local BM25 ===
+
+             id                                              title                                           abstract  ...  year        category     score
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.016393
+2294  0704.2295  Using Image Attributes for Human Identificatio...  A secure human identification protocol aims at...  ...  2007           cs.CR  0.016393
+4954  0705.0952  An Independent Evaluation of Subspace Face Rec...  This paper explores a comparative study of bot...  ...  2007           cs.CV  0.016129
+5364  0705.1362  Studies of EGRET sources with a novel image re...  We have developed an image restoration techniq...  ...  2007        astro-ph  0.016129
+9005  0706.0319               Even more simple cardinal invariants  Using GCH, we force the following: There are c...  ...  2007         math.LO  0.015873
+8187  0705.4185  Secure Two-party Protocols for Point Inclusion...  It is well known that, in theory, the general ...  ...  2007           cs.CR  0.015873
+6582  0705.2580  Quantum protocols for transference of proof of...  Zero-knowledge proof system is an important pr...  ...  2007        quant-ph  0.015625
+70    0704.0071  Pairwise comparisons of typological profiles (...  No abstract given; compares pairs of languages...  ...  2007  physics.soc-ph  0.015625
+9837  0706.1151  A taxonomic Approach to Topology Control in Ad...  Topology Control (TC) aims at tuning the topol...  ...  2007           cs.NI  0.015385
+7742  0705.3740                        Optimal Iris Fuzzy Sketches  Fuzzy sketches, introduced as a link between b...  ...  2007           cs.CR  0.015385
+
+[10 rows x 7 columns]
+```

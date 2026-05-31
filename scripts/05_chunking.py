@@ -32,7 +32,8 @@ METADATA_CHUNK = "chunk"
 METADATA_CHUNK_NUMBER = "chunk_number"
 
 print(f"Loading model: {MODEL_NAME}")
-model = SentenceTransformer(MODEL_NAME)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = SentenceTransformer(MODEL_NAME).to(device)
 
 def count_tokens(text: str) -> int:
     return len(model.tokenizer.encode(text, add_special_tokens=False, truncation=False))
