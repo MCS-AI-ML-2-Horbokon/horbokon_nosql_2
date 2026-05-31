@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import torch
@@ -73,15 +74,9 @@ def search_local_l2(query: str, top_k: int = TOP_K) -> pd.DataFrame:
     results[COLUMN_SCORE] = distances[indexes]
     return results
 
-def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
-    embedding = model.encode(query)
-    results = index.query(
-        vector=embedding.tolist(),
-        top_k=top_k,
-        include_metadata=True
-    )
+def index_matches_to_dataframe(matches) -> pd.DataFrame:
     rows = {}
-    for match in results.matches:
+    for match in matches:
         meta = match.metadata
         assert meta
         rows[match.id] = {
@@ -95,6 +90,27 @@ def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
         }
 
     return pd.DataFrame.from_dict(rows, orient="index")
+
+
+def search_index(query: str, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query)
+    results = index.query(
+        vector=embedding.tolist(),
+        top_k=top_k,
+        include_metadata=True
+    )
+    return index_matches_to_dataframe(results.matches)
+
+
+def search_index_filtered(query: str, filter: dict, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query)
+    results = index.query(
+        vector=embedding.tolist(),
+        top_k=top_k,
+        include_metadata=True,
+        filter=filter
+    )
+    return index_matches_to_dataframe(results.matches)
 
 query = "teaching machines to recognize objects in pictures"
 
@@ -112,3 +128,18 @@ print(search_local_dot_product(query))
 
 print("\n=== Local L2 distance top-5 ===\n")
 print(search_local_l2(query))
+
+recent_year = datetime.now().year - 5
+reinforcement_filter = {
+    COLUMN_CATEGORY: {"$eq": "cs.LG"},
+    COLUMN_YEAR: {"$gte": recent_year}
+}
+older_filter = {
+    COLUMN_YEAR: {"$lt": 2015}
+}
+
+print("\n=== Pinecone filtered search: reinforcement learning, last 5 years, cs.LG ===\n")
+print(search_index_filtered("reinforcement learning", reinforcement_filter))
+
+print("\n=== Pinecone filtered search: older articles before 2015 ===\n")
+print(search_index_filtered(query, older_filter))
