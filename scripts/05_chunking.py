@@ -25,11 +25,17 @@ COLUMN_ABSTRACT_LEN = "abstract_length"
 COLUMN_AUTHORS = "authors"
 COLUMN_CATEGORY = "category"
 COLUMN_YEAR = "year"
+COLUMN_SCORE = "score"
 TOKENS_IN_CHUNK = 120
 TOKENS_IN_CHUNK_OVERLAP = 20
 SENTENCE_SIMILARITY = 0.7 # Merge into one chunk if above
 METADATA_CHUNK = "chunk"
 METADATA_CHUNK_NUMBER = "chunk_number"
+TOP_K = 5
+TEST_QUERY_1 = "teaching machines to recognize objects in pictures"
+TEST_QUERY_2 = "reinforcement learning algorithms"
+TEST_QUERY_3 = "quantum information protocols"
+TEST_QUERIES = [TEST_QUERY_1, TEST_QUERY_2, TEST_QUERY_3]
 
 print(f"Loading model: {MODEL_NAME}")
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -146,5 +152,46 @@ def upsert_chunked_index(index_name: str, chunk_function) -> None:
     stats = index.describe_index_stats()
     print(f"Upsert completed: {stats.total_vector_count} vectors, {stats.dimension} dimensions, {stats.metric} metric")
 
+def search_chunks(index_name: str, query: str, top_k: int = TOP_K) -> pd.DataFrame:
+    embedding = model.encode(query, normalize_embeddings=True)
+    index = pc.index(index_name)
+    results = index.query(
+        vector=embedding.tolist(),
+        top_k=top_k,
+        include_metadata=True,
+    )
+
+    rows = {}
+    for match in results.matches:
+        meta = match.metadata
+        assert meta
+        rows[match.id] = {
+            COLUMN_ID: meta[COLUMN_ID],
+            COLUMN_TITLE: meta[COLUMN_TITLE],
+            COLUMN_CATEGORY: meta[COLUMN_CATEGORY],
+            COLUMN_YEAR: meta[COLUMN_YEAR],
+            METADATA_CHUNK_NUMBER: meta[METADATA_CHUNK_NUMBER],
+            METADATA_CHUNK: meta[METADATA_CHUNK],
+            COLUMN_SCORE: match.score,
+        }
+
+    return pd.DataFrame.from_dict(rows, orient="index")
+
+
+def print_chunk_search_results(query: str) -> None:
+    print(f"\n=== Chunk search query: {query} ===")
+
+    print(f"\n--- Fixed-size chunks ({INDEX_NAME_FIXED}) ---\n")
+    fixed_results = search_chunks(INDEX_NAME_FIXED, query)
+    print(fixed_results)
+
+    print(f"\n--- Semantic chunks ({INDEX_NAME_SEMANTIC}) ---\n")
+    semantic_results = search_chunks(INDEX_NAME_SEMANTIC, query)
+    print(semantic_results)
+
+
 upsert_chunked_index(INDEX_NAME_FIXED, get_fixed_size_chunks)
 upsert_chunked_index(INDEX_NAME_SEMANTIC, get_semantic_chunks)
+
+for query in TEST_QUERIES:
+    print_chunk_search_results(query)
